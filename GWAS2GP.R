@@ -2,6 +2,7 @@
 ################################################################################
 # Step1:General tasks
 ################################################################################
+rm(list=ls())
 getwd()
 dir.create("C:/Users/Win10/Documents/GWAS2GP"); dir.create("C:/Users/Win10/Documents/GWAS2GP/data")
 setwd("C:/Users/Win10/Documents/GWAS2GP")
