@@ -138,7 +138,7 @@ abline(v=fm$burnIn/fm$thin,col=4)
 
 unlink("*.dat") #delete files created by BGLR
 ################################################################################
-rm(list=ls())
+#rm(list=ls())
 
 Y <- pheno_new 
 X <- geno_new
