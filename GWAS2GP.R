@@ -4,7 +4,7 @@
 ################################################################################
 rm(list=ls())
 getwd()
-dir.create("C:/Users/Win10/Documents/GWAS2GP"); dir.create("C:/Users/Win10/Documents/GWAS2GP/data")
+dir.create("C:/Users/Win10/Documents/GWAS2GP"); dir.create("C:/Users/Win10/Documents/GWAS2GP/data")   #Change user name
 setwd("C:/Users/Win10/Documents/GWAS2GP")
 
 download.file(sprintf("https://tassel.bitbucket.io/docs/TASSELTutorialData5.zip"), "data/TASSELTutorialData5.zip") #to unzip
@@ -188,5 +188,4 @@ fm$varE #residual variance
 fm$SD.varE #standard eror of residual variance
 fm$ETA[[1]]$varU #genetic variance
 fm$ETA[[1]]$SD.varU #Standard error of genetic variance
-
 ################################################################################
