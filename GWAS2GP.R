@@ -3,28 +3,23 @@
 # Step1:General tasks
 ################################################################################
 getwd()
-dir.create("C:/Users/Keep1/Documents/GWAS2GP10"); dir.create("C:/Users/Keep1/Documents/GWAS2GP10/data")
-setwd("C:/Users/Keep1/Documents/GWAS2GP10")
-
+dir.create("C:/Users/Win10/Documents/GWAS2GP"); dir.create("C:/Users/Win10/Documents/GWAS2GP/data")
+setwd("C:/Users/Win10/Documents/GWAS2GP")
 
 download.file(sprintf("https://tassel.bitbucket.io/docs/TASSELTutorialData5.zip"), "data/TASSELTutorialData5.zip") #to unzip
 zip_file <- "data/TASSELTutorialData5.zip"
-unzip(zip_file, exdir = "data/AAAAAAj")
+unzip(zip_file, exdir = "data/unzipd")
 
+pheno <- read.table("data/unzipd/TASSELTutorialData5/mdp_traits.txt",head=TRUE)
 
-pheno <- read.table("data/AAAAAAj/TASSELTutorialData5/mdp_traits.txt",head=TRUE)
-
-#pheno <- pheno[-1, ]#Somehow needed to balance geno
-
-MVP.Data(fileHMP="data/AAAAAAj/TASSELTutorialData5/mdp_genotype.hmp.txt", #Genotypic data in HapMap format
-         filePhe="data/AAAAAAj/TASSELTutorialData5/mdp_traits.txt",
+library(rMVP)
+MVP.Data(fileHMP="data/unzipd/TASSELTutorialData5/mdp_genotype.hmp.txt", #Genotypic data in HapMap format
+         filePhe="data/unzipd/TASSELTutorialData5/mdp_traits.txt",
          sep.hmp="\t",
          sep.phe="\t",
          SNP.effect="Add",
          fileKin=T,
-         out="mvp.hmp"
-)
-
+         out="mvp.hmp")
 ################################################################################
 # Step2: import formatted data (MVP.Data) from working directory 
 ################################################################################
@@ -42,8 +37,8 @@ Kinship <- MVP.K.VanRaden(genotypic_dat, verbose = T)
 # PCA and Kinship as covariates
 ################################################################################
 
-dir.create("C:/Users/Keep1/Documents/GWAS2GP1/PcaKinship")
-setwd("C:/Users/Keep1/Documents/GWAS2GP1/PcaKinship")
+dir.create("C:/Users/Win10/Documents/GWAS2GP/PcaKinship")
+setwd("C:/Users/Win10/Documents/GWAS2GP/PcaKinship")
 
 GWAS_PCA_Kin_mvp <- MVP(
   phe = phenotype_dat, 
@@ -60,7 +55,7 @@ GWAS_PCA_Kin_mvp <- MVP(
 # hmp file to 0 1 2 format #####################################################
 ################################################################################
 
-setwd("C:/Users/Keep1/Documents/GWAS2GP10")
+setwd("C:/Users/Win10/Documents/GWAS2GP")
 getwd()
 library(rMVP)
 library(bigmemory)
@@ -97,7 +92,7 @@ geno <- {
   m
 }
 
-# get genotype row names
+# get genotype row names (To sync geno pheno
 geno_ids <- trimws(rownames(geno))
 
 # get phenotype IDs (first column)
@@ -185,4 +180,12 @@ cbind(fm$y,fm$yHat)# NA have value - GEBV
 # correlation comparison in training (TRN) and testing (TST) data sets
 cor(fm$yHat[tst],y[tst]) #TEST
 cor(fm$yHat[-tst],y[-tst]) #TRAIN
+
+#Extracting parameters from the model
+fm$mu #intercept
+fm$varE #residual variance
+fm$SD.varE #standard eror of residual variance
+fm$ETA[[1]]$varU #genetic variance
+fm$ETA[[1]]$SD.varU #Standard error of genetic variance
+
 ################################################################################
