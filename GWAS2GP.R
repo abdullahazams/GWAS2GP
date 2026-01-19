@@ -116,7 +116,6 @@ y<-Y[,2] # EarHT
 ETA<-list(list(X=X, model='BRR')) #Gaussian prior
 ETA<-list(list(X=X, model='BL')) #Double exponential
 
-
 #Fitting the model
 fm<-BGLR(y=y,ETA=ETA, nIter=5000, burnIn=1000, thin = 5) #1000 interactions in total
 cor(fm$y,fm$yHat) #calculate correlation
@@ -186,6 +185,7 @@ legend("topleft", legend=c("training","testing"),
        bty="n",pch=c(1,19), col=c("black","red"))
 
 cbind(fm$y,fm$yHat)# NA have value - GEBV
+cbind(y_TRN = y[-tst], yHat_TRN = fm$yHat[-tst]) # observed vs predicted values (GEBV) in training set
 
 # correlation comparison in training (TRN) and testing (TST) data sets
 cor(fm$yHat[tst],y[tst]) #TEST
