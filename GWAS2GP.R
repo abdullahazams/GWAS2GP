@@ -137,24 +137,25 @@ abline(v=fm$burnIn/fm$thin,col=4)
 unlink("*.dat") #delete files created by BGLR
 ################################################################################
 #rm(list=ls())
+library(BGLR) #import package
 
 Y <- pheno_new 
 y<-Y[,2] # EarHT
 
 #For X and G
-M <- as.matrix(geno_new)                     # Convert genotype data to a numeric matrix (individuals × markers)
+X <- as.matrix(geno_new)                     # Convert genotype data to a numeric matrix (individuals × markers)
 
-p <- colMeans(M, na.rm = TRUE) / 2       # Compute allele frequency for each marker (mean genotype = 2p)
+p <- colMeans(X, na.rm = TRUE) / 2       # Compute allele frequency for each marker (mean genotype = 2p)
 
-Z <- sweep(M, 2, 2 * p, "-")             # Center genotypes by subtracting expected genotype value (2p) per marker
+Z <- sweep(X, 2, 2 * p, "-")             # Center genotypes by subtracting expected genotype value (2p) per marker
 
 G <- tcrossprod(Z) / (2 * sum(p * (1-p)))# Compute VanRaden (2008) genomic relationship matrix, scaled by total genetic variance
 
 #X <- geno_new
 # A<-wheat.A #pedigree relatioship matrix from BGLR
 
-#n<-nrow(X) # lines
-#p<-ncol(X) # markers
+n<-nrow(X) # lines
+p<-ncol(X) # markers
 
 #Testing set
 yNA<-y
