@@ -74,7 +74,6 @@ geno_numeric_list <- list(
   ind = fread("mvp.hmp.geno.ind", header = FALSE, data.table = FALSE)
 )
 
-
 geno <- {
   # library(bigmemory)
   # library(data.table)
@@ -89,7 +88,6 @@ geno <- {
   
   # Assigning dimension names based on the Individual IDs and SNP Map
   dimnames(m) <- list(ind[1:nrow(m), 1], map[1:ncol(m), 1])
-  
   m
 }
 
@@ -141,11 +139,22 @@ unlink("*.dat") #delete files created by BGLR
 #rm(list=ls())
 
 Y <- pheno_new 
-X <- geno_new
-# A<-wheat.A #pedigree relatioship matrix from BGLR
 y<-Y[,2] # EarHT
-n<-nrow(X) # lines
-p<-ncol(X) # markers
+
+#For X and G
+M <- as.matrix(geno_new)                     # Convert genotype data to a numeric matrix (individuals × markers)
+
+p <- colMeans(M, na.rm = TRUE) / 2       # Compute allele frequency for each marker (mean genotype = 2p)
+
+Z <- sweep(M, 2, 2 * p, "-")             # Center genotypes by subtracting expected genotype value (2p) per marker
+
+G <- tcrossprod(Z) / (2 * sum(p * (1-p)))# Compute VanRaden (2008) genomic relationship matrix, scaled by total genetic variance
+
+#X <- geno_new
+# A<-wheat.A #pedigree relatioship matrix from BGLR
+
+#n<-nrow(X) # lines
+#p<-ncol(X) # markers
 
 #Testing set
 yNA<-y
@@ -154,14 +163,13 @@ tst<-sample(1:n,size=100,replace=FALSE)
 yNA[tst]<-NA
 cbind(y,yNA) #which phenotype removed
 
-#For G
-X<-scale(X,center=TRUE,scale=TRUE)
-G<-tcrossprod(X)/p #VanRaden (2008)
+##For G
+#X<-scale(X,center=TRUE,scale=TRUE)
+#G<-tcrossprod(X)/p #VanRaden (2008)
 
 #Generating heatmaps
 heatmap(G) #heatmap for genomic relationship matrix
 #heatmap(A) #heatmap for pedigree relationship matrix
-
 
 #Fitting the G-BLUP model
 ETA<-list(list(K=G,model='RKHS'))
